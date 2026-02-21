@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import type { Factor } from "@/app/page"
+import type { Factor } from "@/lib/mock-data"
 
 function getBarColor(value: number) {
   if (value < 0.35) return "hsl(var(--risk-low))"

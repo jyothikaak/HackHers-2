@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import {
   Card,
   CardContent,
@@ -9,7 +9,9 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
-import { ArrowDown, ArrowUp, Minus } from "lucide-react"
+import { ArrowDown, ArrowUp, Minus, Loader2 } from "lucide-react"
+import { computeMockWhatIf } from "@/lib/mock-data"
+import type { WhatIfRequest, WhatIfResponse } from "@/lib/mock-data"
 
 interface WhatIfSimulatorProps {
   baselineRisk?: number
@@ -19,16 +21,62 @@ export function WhatIfSimulator({ baselineRisk = 72 }: WhatIfSimulatorProps) {
   const [sleepHours, setSleepHours] = useState([6])
   const [deadlines, setDeadlines] = useState([5])
   const [workHours, setWorkHours] = useState([50])
+  const [result, setResult] = useState<WhatIfResponse>(() =>
+    computeMockWhatIf(
+      { sleep_hours: 6, deadlines_next_7_days: 5, work_hours: 50 },
+      baselineRisk
+    )
+  )
+  const [isComputing, setIsComputing] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
-  const newRisk = useMemo(() => {
-    const sleepEffect = (8 - sleepHours[0]) * 4
-    const deadlineEffect = (deadlines[0] - 2) * 3
-    const workEffect = (workHours[0] - 40) * 0.8
-    const raw = 30 + sleepEffect + deadlineEffect + workEffect
-    return Math.max(0, Math.min(100, Math.round(raw)))
-  }, [sleepHours, deadlines, workHours])
+  const fetchWhatIf = useCallback(
+    async (req: WhatIfRequest) => {
+      // Cancel any in-flight request
+      abortRef.current?.abort()
+      const controller = new AbortController()
+      abortRef.current = controller
 
-  const delta = newRisk - baselineRisk
+      setIsComputing(true)
+      try {
+        const res = await fetch("/api/whatif", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...req, baselineRisk }),
+          signal: controller.signal,
+        })
+        if (!res.ok) throw new Error(`API error ${res.status}`)
+        const data: WhatIfResponse = await res.json()
+        setResult(data)
+      } catch (err) {
+        if ((err as Error).name === "AbortError") return
+        // Fallback to local computation
+        setResult(computeMockWhatIf(req, baselineRisk))
+      } finally {
+        setIsComputing(false)
+      }
+    },
+    [baselineRisk]
+  )
+
+  // Debounce slider changes (300ms)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      fetchWhatIf({
+        sleep_hours: sleepHours[0],
+        deadlines_next_7_days: deadlines[0],
+        work_hours: workHours[0],
+      })
+    }, 300)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [sleepHours, deadlines, workHours, fetchWhatIf])
+
+  const newRisk = result.newRiskPercent
+  const delta = result.deltaPercent
   const deltaSign = delta > 0 ? "+" : ""
 
   function getDeltaColor(d: number) {
@@ -140,7 +188,12 @@ export function WhatIfSimulator({ baselineRisk = 72 }: WhatIfSimulatorProps) {
           </div>
 
           {/* Result display */}
-          <div className={`flex flex-col items-center justify-center gap-3 rounded-xl glass px-8 py-6 md:min-w-[180px] ${getRiskGlow(newRisk)}`}>
+          <div className={`relative flex flex-col items-center justify-center gap-3 rounded-xl glass px-8 py-6 md:min-w-[180px] transition-opacity ${isComputing ? "opacity-60" : ""} ${getRiskGlow(newRisk)}`}>
+            {isComputing && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            )}
             <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
               New Projected Risk
             </span>
