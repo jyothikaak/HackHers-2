@@ -106,28 +106,37 @@ export default function DashboardPage() {
           <DashboardSkeleton />
         ) : (
           <>
-            {/* Two-column grid: stacked on mobile, side-by-side on lg */}
-            <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-              {/* ── Left column ──────────────────────────────────── */}
-              <div className="flex flex-col gap-6">
-                <RiskGaugeCard value={dashboard.riskPercent} />
+            {/* Row 1: Forecast chart + Risk gauge side by side */}
+            <section className="mb-8">
+              <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
                 <ForecastCard data={dashboard.forecast} hero />
-                <AlertCard
-                  text={dashboard.alertText}
-                  severity={dashboard.statusColor}
-                />
+                <div className="flex flex-col gap-6">
+                  <RiskGaugeCard value={dashboard.riskPercent} />
+                  <AlertCard
+                    text={dashboard.alertText}
+                    severity={dashboard.statusColor}
+                  />
+                </div>
               </div>
+            </section>
 
-              {/* ── Right column ─────────────────────────────────── */}
-              <div className="flex flex-col gap-6">
+            {/* Row 2: Risk Factors + Explanation + Action Plan */}
+            <section className="mb-8">
+              <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
+                Risk Factors & Insights
+              </h2>
+              <div className="grid gap-6 lg:grid-cols-3">
                 <FactorsCard factors={dashboard.factors} />
                 <ExplanationCard text={dashboard.explanation} />
                 <ActionChecklistCard actions={dashboard.actions} />
               </div>
-            </div>
+            </section>
 
-            {/* ── Full-width bottom: What-If Simulator ──────────── */}
-            <section className="mt-6">
+            {/* Row 3: Full-width What-If Simulator */}
+            <section className="mb-8">
+              <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
+                What-If Simulator
+              </h2>
               <WhatIfSimulatorCard baselineRisk={dashboard.riskPercent} />
             </section>
           </>
