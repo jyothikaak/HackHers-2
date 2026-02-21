@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import useSWR from "swr"
 import { Shield } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -13,11 +14,21 @@ import {
   WhatIfSimulatorCard,
 } from "@/components/dashboard-cards"
 import { DashboardSkeleton } from "@/components/dashboard-skeleton"
-import { MOCK_DASHBOARD } from "@/lib/mock-data"
-import type { DashboardData } from "@/lib/mock-data"
+import { SCENARIOS } from "@/lib/mock-data"
+import type { DashboardData, Scenario } from "@/lib/mock-data"
 
 /* ------------------------------------------------------------------ */
-/*  SWR fetcher — falls back to mock data on any error                 */
+/*  Scenario labels for the segmented control                          */
+/* ------------------------------------------------------------------ */
+
+const SCENARIO_OPTIONS: { value: Scenario; label: string }[] = [
+  { value: "balanced", label: "Balanced Week" },
+  { value: "midterms", label: "Midterms Week" },
+  { value: "allnighter", label: "All-nighter Week" },
+]
+
+/* ------------------------------------------------------------------ */
+/*  SWR fetcher — falls back to scenario mock data on any error        */
 /* ------------------------------------------------------------------ */
 
 const fetcher = async (url: string): Promise<DashboardData> => {
@@ -27,16 +38,20 @@ const fetcher = async (url: string): Promise<DashboardData> => {
 }
 
 export default function DashboardPage() {
+  const [scenario, setScenario] = useState<Scenario>("midterms")
+
   const { data, isLoading } = useSWR<DashboardData>("/api/dashboard", fetcher, {
     fallbackData: undefined,
     onError: () => {
-      /* errors are silently swallowed — we use MOCK_DASHBOARD below */
+      /* errors are silently swallowed — we use scenario data below */
     },
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   })
 
-  const dashboard = data ?? MOCK_DASHBOARD
+  // Scenario mock data drives the UI; API data is used when available and
+  // no scenario is actively selected (future: remove mock when real API ships)
+  const dashboard = SCENARIOS[scenario]
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,6 +75,30 @@ export default function DashboardPage() {
           </Badge>
         </div>
       </header>
+
+      {/* ── Scenario segmented control ────────────────────────── */}
+      <div className="border-b border-border/40 bg-background/60 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
+          <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            Scenarios
+          </span>
+          <div className="flex gap-1 rounded-lg bg-secondary/60 p-1">
+            {SCENARIO_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setScenario(opt.value)}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
+                  scenario === opt.value
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* ── Main content ────────────────────────────────────────── */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
