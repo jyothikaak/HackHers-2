@@ -2,13 +2,15 @@
 
 import useSWR from "swr"
 import { Sidebar } from "@/components/sidebar"
-import { RiskGauge } from "@/components/risk-gauge"
-import { ProjectionChart } from "@/components/projection-chart"
-import { AlertCard } from "@/components/alert-card"
-import { ContributingFactors } from "@/components/contributing-factors"
-import { ExplanationCard } from "@/components/explanation-card"
-import { ActionPlan } from "@/components/action-plan"
-import { WhatIfSimulator } from "@/components/what-if-simulator"
+import {
+  RiskGaugeCard,
+  ForecastCard,
+  AlertCard,
+  FactorsCard,
+  ExplanationCard,
+  ActionChecklistCard,
+  WhatIfSimulatorCard,
+} from "@/components/dashboard-cards"
 import { DashboardSkeleton } from "@/components/dashboard-skeleton"
 import { MOCK_DASHBOARD } from "@/lib/mock-data"
 import type { DashboardData } from "@/lib/mock-data"
@@ -59,9 +61,9 @@ export default function DashboardPage() {
             {/* SECTION: Overview — Chart + Gauge side by side */}
             <section id="overview" className="scroll-mt-8 mb-8">
               <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-                <ProjectionChart data={dashboard.forecast} hero />
+                <ForecastCard data={dashboard.forecast} hero />
                 <div className="flex flex-col gap-6">
-                  <RiskGauge value={dashboard.riskPercent} />
+                  <RiskGaugeCard value={dashboard.riskPercent} />
                   <AlertCard
                     text={dashboard.alertText}
                     severity={dashboard.statusColor}
@@ -76,7 +78,7 @@ export default function DashboardPage() {
                 Risk Factors & Insights
               </h2>
               <div className="grid gap-6 lg:grid-cols-2">
-                <ContributingFactors factors={dashboard.factors} />
+                <FactorsCard factors={dashboard.factors} />
                 <div id="insights" className="scroll-mt-8 flex flex-col gap-6">
                   <ExplanationCard text={dashboard.explanation} />
                 </div>
@@ -88,7 +90,7 @@ export default function DashboardPage() {
               <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
                 Action Plan
               </h2>
-              <ActionPlan actions={dashboard.actions} />
+              <ActionChecklistCard actions={dashboard.actions} />
             </section>
 
             {/* SECTION: Simulator */}
@@ -96,7 +98,7 @@ export default function DashboardPage() {
               <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
                 What-If Simulator
               </h2>
-              <WhatIfSimulator baselineRisk={dashboard.riskPercent} />
+              <WhatIfSimulatorCard baselineRisk={dashboard.riskPercent} />
             </section>
           </>
         )}
