@@ -105,9 +105,9 @@ export default function DashboardPage() {
       <Sidebar scenario={scenario} onScenarioChange={setScenario} />
 
       {/* Main content area — offset for sidebar on desktop */}
-      <main className="min-h-screen px-4 pt-16 pb-12 lg:ml-[260px] lg:px-8 lg:pt-8">
+      <main className="min-h-screen px-4 pt-16 pb-16 lg:ml-[260px] lg:px-10 lg:pt-10">
         {/* Page heading */}
-        <div className="mb-6">
+        <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Burnout Radar
           </h1>
@@ -116,27 +116,25 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* SECTION: Overview — Hero chart with gauge overlay */}
-        <section id="overview" className="scroll-mt-8 mb-6">
-          <div className="relative">
+        {/* SECTION: Overview — Chart + Gauge side by side */}
+        <section id="overview" className="scroll-mt-8 mb-8">
+          <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
             <ProjectionChart data={data.chart} hero />
-            {/* Gauge overlay — top right corner on desktop, stacked below on mobile */}
-            <div className="mt-4 lg:absolute lg:right-4 lg:top-4 lg:mt-0 lg:w-[240px]">
-              <RiskGauge value={data.risk} compact />
+            <div className="flex flex-col gap-6">
+              <RiskGauge value={data.risk} />
+              <AlertCard
+                text={data.alertText}
+                severity={data.risk > 70 ? "high" : data.risk >= 35 ? "medium" : "low"}
+              />
             </div>
           </div>
         </section>
 
-        {/* Alert */}
-        <section className="mb-6">
-          <AlertCard
-            text={data.alertText}
-            severity={data.risk > 70 ? "high" : data.risk >= 35 ? "medium" : "low"}
-          />
-        </section>
-
         {/* SECTION: Risk Factors + Insights — 2 column */}
-        <section id="risk-factors" className="scroll-mt-8 mb-6">
+        <section id="risk-factors" className="scroll-mt-8 mb-8">
+          <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
+            Risk Factors & Insights
+          </h2>
           <div className="grid gap-6 lg:grid-cols-2">
             <ContributingFactors factors={data.factors} />
             <div id="insights" className="scroll-mt-8 flex flex-col gap-6">
@@ -146,12 +144,18 @@ export default function DashboardPage() {
         </section>
 
         {/* SECTION: Action Plan */}
-        <section id="action-plan" className="scroll-mt-8 mb-6">
+        <section id="action-plan" className="scroll-mt-8 mb-8">
+          <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
+            Action Plan
+          </h2>
           <ActionPlan />
         </section>
 
         {/* SECTION: Simulator */}
-        <section id="simulator" className="scroll-mt-8">
+        <section id="simulator" className="scroll-mt-8 mb-8">
+          <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
+            What-If Simulator
+          </h2>
           <WhatIfSimulator baselineRisk={data.risk} />
         </section>
       </main>

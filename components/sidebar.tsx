@@ -88,7 +88,7 @@ export function Sidebar({ scenario, onScenarioChange }: SidebarProps) {
       </div>
 
       {/* Nav links */}
-      <nav className="mt-4 flex flex-col gap-0.5 px-3" aria-label="Dashboard sections">
+      <nav className="mt-4 flex flex-col gap-1 px-3" aria-label="Dashboard sections">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = activeSection === item.id
@@ -96,7 +96,7 @@ export function Sidebar({ scenario, onScenarioChange }: SidebarProps) {
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+              className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all ${
                 isActive
                   ? "bg-primary/10 text-primary border-l-2 border-primary"
                   : "text-muted-foreground hover:bg-glass-highlight hover:text-foreground border-l-2 border-transparent"

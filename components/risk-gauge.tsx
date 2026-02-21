@@ -159,13 +159,13 @@ export function RiskGauge({ value = 72, compact = false }: RiskGaugeProps) {
   }
 
   return (
-    <Card className="glass-subtle rounded-xl">
-      <CardContent className="flex flex-col items-center p-6">
-        <p className="mb-2 text-sm font-medium text-muted-foreground">
+    <Card className="glass-subtle rounded-xl h-full">
+      <CardContent className="flex h-full flex-col items-center justify-center p-5">
+        <p className="mb-1 text-sm font-medium text-muted-foreground">
           Burnout Risk Score
         </p>
-        <GaugeSVG value={value} />
-        <div className="mt-4 flex items-center gap-6 text-xs text-muted-foreground">
+        <GaugeSVG value={value} size={200} />
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-4 text-[11px] text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <span className="inline-block h-2 w-2 rounded-full bg-risk-low" />
             <span>{"Low <35"}</span>
