@@ -40,18 +40,19 @@ const fetcher = async (url: string): Promise<DashboardData> => {
 export default function DashboardPage() {
   const [scenario, setScenario] = useState<Scenario>("midterms")
 
-  const { data, isLoading } = useSWR<DashboardData>("/api/dashboard", fetcher, {
-    fallbackData: undefined,
-    onError: () => {
-      /* errors are silently swallowed — we use scenario data below */
-    },
-    revalidateOnFocus: false,
-    shouldRetryOnError: false,
-  })
+  // SWR key includes the scenario so switching triggers a new fetch
+  const { data, error, isLoading } = useSWR<DashboardData>(
+    `/api/dashboard?scenario=${scenario}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      shouldRetryOnError: false,
+    }
+  )
 
-  // Scenario mock data drives the UI; API data is used when available and
-  // no scenario is actively selected (future: remove mock when real API ships)
-  const dashboard = SCENARIOS[scenario]
+  // API data when available, otherwise graceful fallback to local mock
+  const dashboard = data ?? SCENARIOS[scenario]
+  const isUsingFallback = !data && !!error
 
   return (
     <div className="min-h-screen bg-background">
@@ -102,6 +103,14 @@ export default function DashboardPage() {
 
       {/* ── Main content ────────────────────────────────────────── */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Fallback indicator (dev-visible only when API fails) */}
+        {isUsingFallback && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-risk-medium/20 bg-risk-medium/5 px-3 py-2 text-xs text-risk-medium">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-risk-medium" />
+            Using local fallback data. API endpoint unavailable.
+          </div>
+        )}
+
         {isLoading ? (
           <DashboardSkeleton />
         ) : (
