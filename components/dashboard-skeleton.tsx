@@ -9,21 +9,9 @@ function Pulse({ className }: { className?: string }) {
 export function DashboardSkeleton() {
   return (
     <>
-      <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-        {/* Left column */}
-        <div className="flex flex-col gap-6">
-          {/* Gauge skeleton */}
-          <Card className="glass-subtle rounded-xl">
-            <CardContent className="flex flex-col items-center justify-center gap-4 p-5">
-              <Pulse className="h-4 w-28" />
-              <Pulse className="h-[160px] w-[200px] rounded-lg" />
-              <div className="flex gap-4">
-                <Pulse className="h-3 w-12" />
-                <Pulse className="h-3 w-12" />
-                <Pulse className="h-3 w-12" />
-              </div>
-            </CardContent>
-          </Card>
+      {/* Row 1: Chart + Gauge */}
+      <section className="mb-8">
+        <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
           {/* Chart skeleton */}
           <Card className="glass-subtle rounded-xl">
             <CardHeader className="pb-2">
@@ -33,21 +21,36 @@ export function DashboardSkeleton() {
               <Pulse className="h-[300px] w-full rounded-lg" />
             </CardContent>
           </Card>
-          {/* Alert skeleton */}
-          <Card className="glass-subtle rounded-xl">
-            <CardContent className="flex items-start gap-3 p-4">
-              <Pulse className="h-8 w-8 shrink-0 rounded-lg" />
-              <div className="flex-1 flex flex-col gap-2">
-                <Pulse className="h-4 w-32" />
-                <Pulse className="h-3 w-full" />
-              </div>
-            </CardContent>
-          </Card>
+          {/* Gauge + Alert */}
+          <div className="flex flex-col gap-6">
+            <Card className="glass-subtle rounded-xl">
+              <CardContent className="flex flex-col items-center justify-center gap-4 p-5">
+                <Pulse className="h-4 w-28" />
+                <Pulse className="h-[160px] w-[200px] rounded-lg" />
+                <div className="flex gap-4">
+                  <Pulse className="h-3 w-12" />
+                  <Pulse className="h-3 w-12" />
+                  <Pulse className="h-3 w-12" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="glass-subtle rounded-xl">
+              <CardContent className="flex items-start gap-3 p-4">
+                <Pulse className="h-8 w-8 shrink-0 rounded-lg" />
+                <div className="flex flex-1 flex-col gap-2">
+                  <Pulse className="h-4 w-32" />
+                  <Pulse className="h-3 w-full" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
+      </section>
 
-        {/* Right column */}
-        <div className="flex flex-col gap-6">
-          {/* Factors skeleton */}
+      {/* Row 2: Factors + Explanation + Checklist */}
+      <section className="mb-8">
+        <Pulse className="mb-4 h-5 w-48" />
+        <div className="grid gap-6 lg:grid-cols-3">
           <Card className="glass-subtle rounded-xl">
             <CardHeader>
               <Pulse className="h-4 w-36" />
@@ -64,7 +67,6 @@ export function DashboardSkeleton() {
               ))}
             </CardContent>
           </Card>
-          {/* Explanation skeleton */}
           <Card className="glass-subtle rounded-xl">
             <CardHeader>
               <Pulse className="h-4 w-44" />
@@ -75,7 +77,6 @@ export function DashboardSkeleton() {
               <Pulse className="h-4 w-5/6" />
             </CardContent>
           </Card>
-          {/* Action checklist skeleton */}
           <Card className="glass-subtle rounded-xl">
             <CardHeader>
               <Pulse className="h-4 w-24" />
@@ -90,15 +91,13 @@ export function DashboardSkeleton() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </section>
 
-      {/* Simulator skeleton */}
-      <section className="mt-6">
+      {/* Row 3: Simulator */}
+      <section className="mb-8">
+        <Pulse className="mb-4 h-5 w-36" />
         <Card className="glass-subtle rounded-xl">
-          <CardHeader>
-            <Pulse className="h-4 w-32" />
-          </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <div className="grid gap-8 md:grid-cols-[1fr_180px]">
               <div className="flex flex-col gap-6">
                 {Array.from({ length: 3 }).map((_, i) => (
