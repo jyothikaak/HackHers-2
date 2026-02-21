@@ -1,7 +1,8 @@
 "use client"
 
 import useSWR from "swr"
-import { Sidebar } from "@/components/sidebar"
+import { Shield } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 import {
   RiskGaugeCard,
   ForecastCard,
@@ -35,69 +36,59 @@ export default function DashboardPage() {
     shouldRetryOnError: false,
   })
 
-  // Use API data if available, otherwise fall back to mock
   const dashboard = data ?? MOCK_DASHBOARD
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
-
-      {/* Main content area — offset for sidebar on desktop */}
-      <main className="min-h-screen px-4 pt-16 pb-16 lg:ml-[260px] lg:px-10 lg:pt-10">
-        {/* Page heading */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Burnout Radar
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Your personalized risk analysis and action recommendations.
-          </p>
+      {/* ── Top nav ─────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20 ring-1 ring-primary/30">
+              <span className="text-sm font-bold text-primary">E</span>
+            </div>
+            <span className="text-base font-semibold tracking-tight text-foreground">
+              Equilibria
+            </span>
+          </div>
+          <Badge
+            variant="secondary"
+            className="flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-medium text-muted-foreground"
+          >
+            <Shield className="h-3 w-3" />
+            <span>Privacy: data stays local (demo)</span>
+          </Badge>
         </div>
+      </header>
 
+      {/* ── Main content ────────────────────────────────────────── */}
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {isLoading ? (
           <DashboardSkeleton />
         ) : (
           <>
-            {/* SECTION: Overview — Chart + Gauge side by side */}
-            <section id="overview" className="scroll-mt-8 mb-8">
-              <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
+            {/* Two-column grid: stacked on mobile, side-by-side on lg */}
+            <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+              {/* ── Left column ──────────────────────────────────── */}
+              <div className="flex flex-col gap-6">
+                <RiskGaugeCard value={dashboard.riskPercent} />
                 <ForecastCard data={dashboard.forecast} hero />
-                <div className="flex flex-col gap-6">
-                  <RiskGaugeCard value={dashboard.riskPercent} />
-                  <AlertCard
-                    text={dashboard.alertText}
-                    severity={dashboard.statusColor}
-                  />
-                </div>
+                <AlertCard
+                  text={dashboard.alertText}
+                  severity={dashboard.statusColor}
+                />
               </div>
-            </section>
 
-            {/* SECTION: Risk Factors + Insights — 2 column */}
-            <section id="risk-factors" className="scroll-mt-8 mb-8">
-              <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
-                Risk Factors & Insights
-              </h2>
-              <div className="grid gap-6 lg:grid-cols-2">
+              {/* ── Right column ─────────────────────────────────── */}
+              <div className="flex flex-col gap-6">
                 <FactorsCard factors={dashboard.factors} />
-                <div id="insights" className="scroll-mt-8 flex flex-col gap-6">
-                  <ExplanationCard text={dashboard.explanation} />
-                </div>
+                <ExplanationCard text={dashboard.explanation} />
+                <ActionChecklistCard actions={dashboard.actions} />
               </div>
-            </section>
+            </div>
 
-            {/* SECTION: Action Plan */}
-            <section id="action-plan" className="scroll-mt-8 mb-8">
-              <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
-                Action Plan
-              </h2>
-              <ActionChecklistCard actions={dashboard.actions} />
-            </section>
-
-            {/* SECTION: Simulator */}
-            <section id="simulator" className="scroll-mt-8 mb-8">
-              <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground">
-                What-If Simulator
-              </h2>
+            {/* ── Full-width bottom: What-If Simulator ──────────── */}
+            <section className="mt-6">
               <WhatIfSimulatorCard baselineRisk={dashboard.riskPercent} />
             </section>
           </>
