@@ -10,16 +10,22 @@ import {
 } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Info } from "lucide-react"
+import type { ActionItem } from "@/lib/mock-data"
 
-const defaultItems = [
-  { id: "blocks", label: "Schedule focus blocks (2h deep work, then break)", checked: false },
-  { id: "tasks", label: "Break large tasks into smaller deliverables", checked: false },
-  { id: "workload", label: "Reduce workload by deferring or delegating 1-2 items", checked: false },
-  { id: "advisor", label: "Talk to advisor / RA about current load", checked: false },
+const FALLBACK_ACTIONS: ActionItem[] = [
+  { id: "blocks", label: "Schedule focus blocks (2h deep work, then break)" },
+  { id: "tasks", label: "Break large tasks into smaller deliverables" },
+  { id: "workload", label: "Reduce workload by deferring or delegating 1-2 items" },
+  { id: "advisor", label: "Talk to advisor / RA about current load" },
 ]
 
-export function ActionPlan() {
-  const [items, setItems] = useState(defaultItems)
+interface ActionPlanProps {
+  actions?: ActionItem[]
+}
+
+export function ActionPlan({ actions }: ActionPlanProps) {
+  const actionList = actions ?? FALLBACK_ACTIONS
+  const [items, setItems] = useState(actionList.map((a) => ({ ...a, checked: false })))
 
   function toggleItem(id: string) {
     setItems((prev) =>

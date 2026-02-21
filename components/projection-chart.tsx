@@ -16,7 +16,7 @@ import {
   ReferenceLine,
 } from "recharts"
 import { useEffect, useRef, useState } from "react"
-import type { ChartPoint } from "@/app/page"
+import type { ChartPoint } from "@/lib/mock-data"
 
 interface ProjectionChartProps {
   data: ChartPoint[]

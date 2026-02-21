@@ -12,8 +12,6 @@ import {
   Menu,
   X,
 } from "lucide-react"
-import type { Scenario } from "@/app/page"
-
 const navItems = [
   { id: "overview", label: "Overview", icon: BarChart3 },
   { id: "risk-factors", label: "Risk Factors", icon: Activity },
@@ -22,18 +20,7 @@ const navItems = [
   { id: "simulator", label: "Simulator", icon: SlidersHorizontal },
 ]
 
-const scenarioOptions: { value: Scenario; label: string; desc: string }[] = [
-  { value: "balanced", label: "Balanced", desc: "Normal week" },
-  { value: "midterms", label: "Midterms", desc: "Exam pressure" },
-  { value: "allnighter", label: "All-nighter", desc: "Sleep deprived" },
-]
-
-interface SidebarProps {
-  scenario: Scenario
-  onScenarioChange: (s: Scenario) => void
-}
-
-export function Sidebar({ scenario, onScenarioChange }: SidebarProps) {
+export function Sidebar() {
   const [activeSection, setActiveSection] = useState("overview")
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -108,41 +95,6 @@ export function Sidebar({ scenario, onScenarioChange }: SidebarProps) {
           )
         })}
       </nav>
-
-      {/* Divider */}
-      <div className="mx-5 my-4 h-px bg-glass-border" />
-
-      {/* Scenario selector */}
-      <div className="px-3">
-        <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-          Scenarios
-        </p>
-        <div className="flex flex-col gap-1">
-          {scenarioOptions.map((opt) => {
-            const isActive = scenario === opt.value
-            return (
-              <button
-                key={opt.value}
-                onClick={() => onScenarioChange(opt.value)}
-                className={`flex flex-col rounded-lg px-3 py-2 text-left transition-all ${
-                  isActive
-                    ? "bg-primary/10 ring-1 ring-primary/20"
-                    : "hover:bg-glass-highlight"
-                }`}
-              >
-                <span
-                  className={`text-sm font-medium ${
-                    isActive ? "text-primary" : "text-foreground"
-                  }`}
-                >
-                  {opt.label}
-                </span>
-                <span className="text-[11px] text-muted-foreground">{opt.desc}</span>
-              </button>
-            )
-          })}
-        </div>
-      </div>
 
       {/* Spacer */}
       <div className="flex-1" />

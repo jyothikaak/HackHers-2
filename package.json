@@ -12,6 +12,7 @@
     "next": "^16",
     "react": "^19",
     "react-dom": "^19",
+    "swr": "^2.2.5",
     "recharts": "^2.15.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
